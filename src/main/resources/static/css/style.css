@@ -1,0 +1,44 @@
+#container {
+	overflow:hidden;
+    background-color: #dad7d7;
+}
+
+.header {
+    color: white;
+    background-color: black;
+    clear: left;
+	padding-top: 0.5em;
+	padding-left: 0.5em;
+	height: 5%;
+}
+
+#content {
+    text-align: center;
+	width: 65%;
+	height: 95%;
+	overflow:hidden;
+	padding-top: 0.5em;
+	padding-left: 0.5em;
+    margin:0 auto;
+}
+
+p {
+	padding-top: 0.5em;
+	padding-left: 0.5em;
+	font-family: arial;
+}
+
+.js-toggle-left-slidebar{
+    background-color: #a6a6a6;
+    border: none;
+    color: white;
+    padding: 8px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 2px 2px 2px 2px;
+    cursor: pointer;
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}

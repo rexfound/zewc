@@ -13,4 +13,5 @@ public class HomeController {
   public String progressGraph() {
     return "home";
   }
+
 }
