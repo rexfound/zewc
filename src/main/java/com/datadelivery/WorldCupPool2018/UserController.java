@@ -1,12 +1,14 @@
 package com.datadelivery.WorldCupPool2018;
 
+import com.google.common.collect.Lists;
 import com.mongodb.client.*;
 import org.bson.*;
 import org.springframework.stereotype.*;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
+import java.util.List;
+
 
 @Controller
 public class UserController {
@@ -22,19 +24,8 @@ public class UserController {
                               @RequestParam("password") String password) {
         // write your code to save details
 
+        MongoDatabase database = DBConnectionHelper.getConnection();
         if (!name.isEmpty() && !team.isEmpty() && !password.isEmpty()) {
-            // Creating a Mongo client
-            MongoClient mongo = new MongoClient("localhost", 27017);
-
-            // Creating Credentials
-            MongoCredential credential;
-            credential = MongoCredential.createCredential("sampleUser", "myDb",
-                    "password".toCharArray());
-            System.out.println("Connected to the database successfully");
-
-            // Accessing the database
-            MongoDatabase database = mongo.getDatabase("WC_2018");
-
             MongoCollection userCollection = database.getCollection("Users");
 
             Document newUser = new Document();
@@ -54,5 +45,25 @@ public class UserController {
         }
 
         return "user";
+    }
+
+    @GetMapping("/viewUser")
+    public String viewUser(Model result) {
+
+        MongoDatabase database = DBConnectionHelper.getConnection();
+        MongoCollection userCollection = database.getCollection("Users");
+
+        MongoCursor<Document> cursor = userCollection.find().iterator();
+        List<Document> userDetail = Lists.newArrayList();
+        try {
+            while (cursor.hasNext()) {
+                userDetail.add(cursor.next());
+            }
+            result.addAttribute("userDetail", userDetail);
+        }
+        finally {
+            cursor.close();
+        }
+        return "userDetail";
     }
 }
