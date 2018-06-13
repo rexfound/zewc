@@ -24,7 +24,7 @@ public class UserController {
 
         if (!name.isEmpty() && !team.isEmpty() && !password.isEmpty()) {
             // Creating a Mongo client
-            MongoClient mongo = new MongoClient("localhost", 27017);
+            MongoClient mongo = new MongoClient("10.0.1.145", 27017);
 
             // Creating Credentials
             MongoCredential credential;

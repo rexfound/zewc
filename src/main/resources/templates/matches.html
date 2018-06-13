@@ -6,23 +6,10 @@
     <link rel="stylesheet" href="css/slidebars.css">
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript">
-        function showMatches() {
-
-
-            var jsonData = $.ajax({
-                contentType: "application/json",
-                url: "/api/getAllMatches",
-                dataType: "json",
-                async: false
-            }).responseText;
-
-            console.info(jsonData);
-
-            //document.getElementById('line_top_x')
-        }
+        
     </script>
 </head>
-<body onload="showMatches()">
+<body>
 <div canvas="container" id="container">
     <div class="header">
         <button class="js-toggle-left-slidebar">Menu</button>
