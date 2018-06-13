@@ -12,6 +12,16 @@
 	height: 5%;
 }
 
+.mLinkStyle a {
+    font-size: 12px;
+    color: #666666;
+    background: none;
+    font-variant: normal;
+    text-decoration: none;
+    /*text-decoration-style: dotted;*/
+    padding: 1px 1px 1px 1px;
+}
+
 #content {
     text-align: center;
 	width: 65%;
