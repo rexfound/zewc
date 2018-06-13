@@ -6,6 +6,7 @@ import com.datadelivery.WorldCupPool2018.object.GraphRow;
 import com.datadelivery.WorldCupPool2018.object.GraphRowValue;
 import com.google.common.collect.Lists;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -39,6 +40,13 @@ public class DataService {
 
     result.setCols(players);
     result.setRows(balance);
+    return result;
+  }
+
+  public String getFixtures() {
+    RestTemplate restTemplate = new RestTemplate();
+    String result = restTemplate.getForObject("http://api.football-data.org/v1/competitions/{id}/fixtures", String.class, "467");
+    System.out.println("Fixtures: " + result);
     return result;
   }
 

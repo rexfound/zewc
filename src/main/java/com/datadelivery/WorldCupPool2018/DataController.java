@@ -26,4 +26,9 @@ public class DataController {
 
     return ResponseEntity.ok(result);
   }
+
+  @GetMapping("/api/getAllMatches")
+  public String getAllMatches() {
+    return dataService.getFixtures();
+  }
 }

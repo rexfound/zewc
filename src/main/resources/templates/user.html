@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title th:text="Home"></title>
+    <title text="Add User"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="css/slidebars.css">
     <link rel="stylesheet" href="css/style.css">
@@ -12,12 +12,21 @@
         <button class="js-toggle-left-slidebar">Menu</button>
     </div>
     <div id="content">
-        <h1>2018 World Cup Pool</h1>
+        <h1>Add New User</h1>
+        <form method="post" action="saveUser">
+            Name:<br>
+            <input type="text" name="name"><br><br>
+            Favorite Team:<br>
+            <input type="text" name="team"><br><br>
+            Password:<br>
+            <input type="password" name="password"><br><br>
+            <input type="submit" value="Submit">
+        </form>
     </div>
 </div>
 
 <div off-canvas="slidebar-1 left reveal" class="mLinkStyle">
-    <p><a href="/">Home </a></p>
+    <p><a href="/">Home</a></p>
     <p><a href ="/addUser">New User</a></p>
     <p><a href ="/showMatches">Show Matches</a></p>
 </div>
