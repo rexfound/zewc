@@ -34,7 +34,7 @@
         <h1>Pick your winner!</h1>
         <form method="post" action="placeBet" onsubmit="return validateForm();">
             Match ID:<br>
-            <input type="text" name="matchID" th:value="${#httpServletRequest.getParameter('matchID')}"><br><br>
+            <input type="text" name="matchID" readonly="readonly" th:value="${#httpServletRequest.getParameter('matchID')}"><br><br>
             User:<br>
             <select name="name">
                 <option value = "0" selected>*** Choose User ***</option>

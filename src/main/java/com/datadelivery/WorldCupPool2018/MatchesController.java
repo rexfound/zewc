@@ -36,7 +36,7 @@ public class MatchesController {
 
     DataService dataService;
     Pattern URL_PATT =Pattern.compile("http.*\\/fixtures\\/(\\d+)");
-    private final int BET_AMOUNT = 2;
+    private final double BET_AMOUNT = 2.00;
 
     @Autowired
     public void set(DataService dataService) {
@@ -73,7 +73,7 @@ public class MatchesController {
     public String placeBet(@RequestParam("matchID") String matchID,
                             @RequestParam("name") String name,
                                 @RequestParam("team") String team,
-                                    @RequestParam("password") String password) {
+                                    @RequestParam("password") String password, Model model) {
         // write your code to save details
         MongoDatabase database =  dataService.initConnection();
         if (!name.isEmpty() && !team.isEmpty() && !password.isEmpty()) {
@@ -83,9 +83,6 @@ public class MatchesController {
             Document newPick = new Document();
             newPick.append("match", matchID);
             newPick.append("user", name);
-            newPick.append("teamPick", team);
-            newPick.append("betAmount", BET_AMOUNT);
-            newPick.append("totalBalance", 0);
 
             // Check password
             BasicDBObject userDocument = new BasicDBObject();
@@ -99,17 +96,30 @@ public class MatchesController {
 
                 FindIterable<Document> iterDoc = userMatchesCollection.find(newPick);
 
-                if (!iterDoc.iterator().hasNext()){
+                if (iterDoc.iterator().hasNext()){
+                    userMatchesCollection.deleteOne(newPick);
+                    newPick.append("teamPick", team);
+                    newPick.append("betAmount", BET_AMOUNT);
+                    newPick.append("totalBalance", null);
+                    userMatchesCollection.insertOne(newPick);
+                    model.addAttribute("comment", "Successfully updated " + team + " under " + name);
+                }
+                else {
+                    newPick.append("teamPick", team);
+                    newPick.append("betAmount", BET_AMOUNT);
+                    newPick.append("totalBalance", null);
                     userMatchesCollection.insertOne(newPick);
                     System.out.println("Added new pick: " + name + ".");
+                    model.addAttribute("comment", "Successfully picked " + team + " under " + name);
                 }
             }
             else {
                 System.out.println("Authentication failed");
+                model.addAttribute("comment", "Incorrect Password");
             }
 
         }
-        return "bet";
+        return showMatches(model);
     }
 
     public List<Object> getFixtures() {

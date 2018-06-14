@@ -11,6 +11,10 @@
 	height: 5%;
 }
 
+.comment {
+    color: red;
+}
+
 .mLinkStyle a {
     font-size: 12px;
     color: #666666;

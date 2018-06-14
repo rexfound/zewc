@@ -12,6 +12,7 @@
         <button class="js-toggle-left-slidebar">Menu</button>
     </div>
     <div id="content">
+        <span th:if="${comment != null}" th:text="${comment}" class="comment"></span>
         <h1>All Matches</h1>
         <table class="tableStyle">
             <tr>
@@ -31,7 +32,7 @@
                 <td th:text="${match.get('goalsAwayTeam')}"></td>
                 <td th:text="${match.get('awayTeamName')}"></td>
                 <td th:text="${match.get('status')}"></td>
-                <td><a th:href="@{'/betDetails?matchID=' + ${match.get('MatchID')} + '&home=' + ${match.get('homeTeamName')} + '&away=' + ${match.get('awayTeamName')}}">Pick</a></td>
+                <td><a th:if="${match.get('status') == 'TIMED'}" th:href="@{'/betDetails?matchID=' + ${match.get('MatchID')} + '&home=' + ${match.get('homeTeamName')} + '&away=' + ${match.get('awayTeamName')}}">Pick</a></td>
                 <!--<td th:text="${match.get('Competition')}"></td>-->
             </tr>
         </table>

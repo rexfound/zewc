@@ -12,6 +12,7 @@
         <button class="js-toggle-left-slidebar">Menu</button>
     </div>
     <div id="content">
+        <span th:if="${comment != null}" th:text="${comment}" class="comment"></span>
         <h1>Add New User</h1>
         <form method="post" action="saveUser">
             Name:<br>
