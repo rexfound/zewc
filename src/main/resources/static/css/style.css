@@ -1,5 +1,4 @@
 #container {
-	overflow:hidden;
     background-color: #dad7d7;
 }
 
@@ -15,6 +14,16 @@
 .mLinkStyle a {
     font-size: 12px;
     color: #666666;
+    background: none;
+    font-variant: normal;
+    text-decoration: none;
+    /*text-decoration-style: dotted;*/
+    padding: 1px 1px 1px 1px;
+}
+
+.tableStyle a {
+    font-size: 14px;
+    color: #0099ff;
     background: none;
     font-variant: normal;
     text-decoration: none;
@@ -56,8 +65,6 @@
 #content {
     text-align: center;
 	width: 65%;
-	height: 95%;
-	overflow:hidden;
 	padding-top: 0.5em;
 	padding-left: 0.5em;
     margin:0 auto;

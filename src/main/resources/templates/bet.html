@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title text="Place bet"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="css/slidebars.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript">
+        function validateForm() {
+            var user = document.getElementsByName("name").item(0).value;
+            var team = document.getElementsByName("team").item(0).value;
+            var pwd = document.getElementsByName("password").item(0).value;
+
+            if (user == 0 || team == 0 || isEmpty(pwd)) {
+                alert("All fields are required!");
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function isEmpty(str) {
+            return (!str || 0 === str.length);
+        }
+    </script>
+</head>
+<body>
+<div canvas="container" id="container">
+    <div class="header">
+        <button class="js-toggle-left-slidebar">Menu</button>
+    </div>
+    <div id="content">
+        <h1>Pick your winner!</h1>
+        <form method="post" action="placeBet" onsubmit="return validateForm();">
+            Match ID:<br>
+            <input type="text" name="matchID" th:value="${#httpServletRequest.getParameter('matchID')}"><br><br>
+            User:<br>
+            <select name="name">
+                <option value = "0" selected>*** Choose User ***</option>
+                <option th:each="user: ${users}" th:value="${user.name}" th:text="${user.name}"></option>
+            </select><br><br>
+            Team:<br>
+            <select name="team">
+                <option value = "0" selected>*** Choose Team ***</option>
+                <option th:value="${#httpServletRequest.getParameter('home')}" th:text="${#httpServletRequest.getParameter('home')}"></option>
+                <option th:value="${#httpServletRequest.getParameter('away')}" th:text="${#httpServletRequest.getParameter('away')}"></option>
+                <option value = "tie">Tie Game</option>
+            </select><br><br>
+            Password:<br>
+            <input type="password" name="password"><br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
+
+<div off-canvas="slidebar-1 left reveal" class="mLinkStyle">
+    <p><a href="/">Home</a></p>
+    <p><a href ="/addUser">New User</a></p>
+    <p><a href ="/viewUser">User List</a></p>
+    <p><a href ="/showMatches">Show Matches</a></p>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="js/slidebars.js"></script>
+<script src="js/scripts.js"></script>
+</body>
+</html>

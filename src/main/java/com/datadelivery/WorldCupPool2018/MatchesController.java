@@ -1,10 +1,25 @@
 package com.datadelivery.WorldCupPool2018;
 
+import com.datadelivery.WorldCupPool2018.service.DataService;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.google.common.collect.Lists;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,9 +28,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class MatchesController {
+
+    DataService dataService;
+    Pattern URL_PATT =Pattern.compile("http.*\\/fixtures\\/(\\d+)");
+    private final int BET_AMOUNT = 2;
+
+    @Autowired
+    public void set(DataService dataService) {
+        this.dataService = dataService;
+    }
+
 
     @GetMapping("/showMatches")
     public String showMatches(Model result) {
@@ -23,9 +50,81 @@ public class MatchesController {
         return "matches";
     }
 
+    @GetMapping("/betDetails")
+    public String betDetails(Model result) {
+        MongoDatabase database = dataService.initConnection();
+        MongoCollection userCollection = database.getCollection("Users");
+
+        MongoCursor<Document> cursor = userCollection.find().iterator();
+        List<Document> userDetail = Lists.newArrayList();
+        try {
+            while (cursor.hasNext()) {
+                userDetail.add(cursor.next());
+            }
+            result.addAttribute("users", userDetail);
+        }
+        finally {
+            cursor.close();
+        }
+        return "bet";
+    }
+
+    @PostMapping("/placeBet")
+    public String placeBet(@RequestParam("matchID") String matchID,
+                            @RequestParam("name") String name,
+                                @RequestParam("team") String team,
+                                    @RequestParam("password") String password) {
+        // write your code to save details
+        MongoDatabase database =  dataService.initConnection();
+        if (!name.isEmpty() && !team.isEmpty() && !password.isEmpty()) {
+            MongoCollection userCollection = database.getCollection("Users");
+            MongoCollection userMatchesCollection = database.getCollection("UserMatches");
+
+            Document newPick = new Document();
+            newPick.append("match", matchID);
+            newPick.append("user", name);
+            newPick.append("teamPick", team);
+            newPick.append("betAmount", BET_AMOUNT);
+            newPick.append("totalBalance", 0);
+
+            // Check password
+            BasicDBObject userDocument = new BasicDBObject();
+            userDocument.append("password", password);
+            userDocument.append("name", name);
+
+            if (userCollection.find(userDocument).iterator().hasNext()) {
+                System.out.println("Authenticated: " + name);
+
+                // Check for existing pick
+
+                FindIterable<Document> iterDoc = userMatchesCollection.find(newPick);
+
+                if (!iterDoc.iterator().hasNext()){
+                    userMatchesCollection.insertOne(newPick);
+                    System.out.println("Added new pick: " + name + ".");
+                }
+            }
+            else {
+                System.out.println("Authentication failed");
+            }
+
+        }
+        return "bet";
+    }
+
     public List<Object> getFixtures() {
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject("http://api.football-data.org/v1/competitions/{id}/fixtures", String.class, "467");
+
+        // Create the request body as a MultiValueMap
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
+
+        body.add("X-Auth-Token", "d1a78d030eac433ebf8f7a14c1eb6e73");
+
+        // Note the body object as first parameter!
+        HttpEntity<?> httpEntity = new HttpEntity<Object>(body);
+
+        ResponseEntity<String> result = restTemplate.exchange(
+                "http://api.football-data.org/v1/competitions/{id}/fixtures", HttpMethod.GET, httpEntity, String.class, "467");
 
         JsonFactory factory = new JsonFactory();
 
@@ -33,11 +132,10 @@ public class MatchesController {
         Map<String, String> map = new HashMap<>();
 
         try {
-            JsonParser parser = factory.createParser(result);
+            JsonParser parser = factory.createParser(result.getBody());
 
             while(!parser.isClosed()){
                 JsonToken jsonToken = parser.nextToken();
-
                 if(JsonToken.FIELD_NAME.equals(jsonToken)){
 
                     String fieldName = parser.getCurrentName();
@@ -49,13 +147,20 @@ public class MatchesController {
                     }
                     else if (fieldName.equals("href")) {
                         if (parser.getValueAsString().contains("fixtures/")) {
-                            map.put("Competition", parser.getValueAsString());
+                            String matchURL = parser.getValueAsString();
+                            Matcher mtr = URL_PATT.matcher(matchURL);
+                            if (mtr.matches()) {
+                                map.put("MatchID", mtr.group(1));
+                            }
+                            map.put("Competition", matchURL);
                         }
                     }
                     else if (fieldName.equals("date") || fieldName.equals("status") ||
                             fieldName.equals("homeTeamName") || fieldName.equals("awayTeamName") ||
                                 fieldName.equals("goalsHomeTeam") || fieldName.equals("goalsAwayTeam")) {
-                        map.put(fieldName, parser.getValueAsString());
+                        if (!map.containsKey(fieldName)) {
+                            map.put(fieldName, parser.getValueAsString());
+                        }
                     }
                 }
             }
