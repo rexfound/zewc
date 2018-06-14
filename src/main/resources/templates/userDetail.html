@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="Home"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="css/slidebars.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            var jsonData = $.ajax({
+                contentType: "application/json",
+                url: "/api/getBalanceHistory",
+                dataType: "json",
+                async: false
+            }).responseText;
+
+            console.info(jsonData);
+            // Create our data table out of JSON data loaded from server.
+            var data = new google.visualization.DataTable(jsonData);
+
+            var options = {
+                chart: {
+                    title: 'Overall progress (Currently generated randomly)'
+                },
+                width: 500,
+                height: 300
+            };
+
+            var chart = new google.charts.Line(document.getElementById('line_top_x'));
+
+            chart.draw(data, google.charts.Line.convertOptions(options));
+        }
+    </script>
+</head>
+<body>
+<div canvas="container" id="container">
+    <div class="header">
+        <button class="js-toggle-left-slidebar">Menu</button>
+    </div>
+    <div id="content">
+        <h1>User List</h1>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Team</th>
+            </tr>
+            <tr th:each = "user: ${userDetail}">
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.team}"></td>
+            </tr>
+        </table>
+        <div id="line_top_x"></div>
+    </div>
+</div>
+
+<div off-canvas="slidebar-1 left reveal" class="mLinkStyle">
+    <p><a href="/">Home</a></p>
+    <p><a href ="/addUser">New User</a></p>
+    <p><a href ="/viewUser">User List</a></p>
+    <p><a href ="/showMatches">Show Matches</a></p>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="js/slidebars.js"></script>
+<script src="js/scripts.js"></script>
+</body>
+</html>
