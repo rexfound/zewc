@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.orderBy;
+
 
 @Controller
 public class UserController {
@@ -30,7 +33,7 @@ public class UserController {
     @PostMapping("/saveUser")
     public String saveDetails(@RequestParam("name") String name,
                               @RequestParam("team") String team,
-                              @RequestParam("password") String password, Model model) {
+                              @RequestParam("password") String password) {
         // write your code to save details
 
         MongoDatabase database =  dataService.initConnection();
@@ -39,6 +42,8 @@ public class UserController {
 
             Document newUser = new Document();
             newUser.append("name", name);
+            newUser.append("team", team);
+            newUser.append("password", password);
 
 
             // Check for existing user
@@ -46,18 +51,12 @@ public class UserController {
             FindIterable<Document> iterDoc = userCollection.find(newUser);
 
             if (!iterDoc.iterator().hasNext()){
-                newUser.append("team", team);
-                newUser.append("password", password);
                 userCollection.insertOne(newUser);
                 System.out.println("Added new user: " + name + ".");
-                model.addAttribute("comment", "Added new user: " + name + ".");
-            }
-            else {
-                model.addAttribute("comment", name + " already exists!");
             }
         }
 
-        return addUser();
+        return "user";
     }
 
     @GetMapping("/viewUser")
@@ -66,7 +65,7 @@ public class UserController {
         MongoDatabase database = dataService.initConnection();
         MongoCollection userCollection = database.getCollection("Users");
 
-        MongoCursor<Document> cursor = userCollection.find().iterator();
+        MongoCursor<Document> cursor = userCollection.find().sort(orderBy(ascending("name"))).iterator();
         List<Document> userDetail = Lists.newArrayList();
         try {
             while (cursor.hasNext()) {
