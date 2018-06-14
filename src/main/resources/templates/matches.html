@@ -16,6 +16,26 @@
     </div>
     <div id="content">
         <h1>All Matches</h1>
+        <table class="tableStyle">
+            <tr>
+                <th class="tableHeaderStyle">Date</th>
+                <th class="tableHeaderStyle">Home Team</t>
+                <th class="tableHeaderStyle">Home Score</th>
+                <th class="tableHeaderStyle">Away Score</th>
+                <th class="tableHeaderStyle">Away Team</th>
+                <th class="tableHeaderStyle">Status</th>
+                <!--<th>Match</th>-->
+            </tr>
+            <tr th:each = "match: ${matches}">
+                <td th:text="${match.get('date')}"></td>
+                <td th:text="${match.get('homeTeamName')}"></td>
+                <td th:text="${match.get('goalsHomeTeam')}"></td>
+                <td th:text="${match.get('goalsAwayTeam')}"></td>
+                <td th:text="${match.get('awayTeamName')}"></td>
+                <td th:text="${match.get('status')}"></td>
+                <!--<td th:text="${match.get('Competition')}"></td>-->
+            </tr>
+        </table>
     </div>
 </div>
 

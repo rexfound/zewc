@@ -22,6 +22,37 @@
     padding: 1px 1px 1px 1px;
 }
 
+.tableStyle {
+    border-collapse: collapse;
+    border: 0px;
+    margin: auto;
+}
+
+.tableStyle th {
+    background-color: #d5e8f9;
+    text-align: center;
+    padding: 5px 5px 5px 10px;
+}
+
+.tableStyle td {
+    padding: 5px 5px 5px 10px;
+}
+
+.tableStyle tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.tableHeaderStyle {
+    border-collapse: collapse;
+    border: 0px;
+}
+
+.tableHeaderStyle th {
+    background-color: #d5e8f9;
+    padding: 5px 5px 5px 10px;
+}
+
+
 #content {
     text-align: center;
 	width: 65%;
