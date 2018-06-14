@@ -28,8 +28,10 @@
                 chart: {
                     title: 'Overall progress (Currently generated randomly)'
                 },
-                width: 500,
-                height: 300
+                lineWidth: 1,
+                width: 800,
+                height: 300,
+                legend: {position: 'top', textStyle: {fontSize: 10}}
             };
 
             var chart = new google.charts.Line(document.getElementById('line_top_x'));
