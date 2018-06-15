@@ -1,5 +1,4 @@
 #container {
-	overflow:hidden;
     background-color: #dad7d7;
 }
 
@@ -12,6 +11,10 @@
 	height: 5%;
 }
 
+.comment {
+    color: red;
+}
+
 .mLinkStyle a {
     font-size: 12px;
     color: #666666;
@@ -22,11 +25,50 @@
     padding: 1px 1px 1px 1px;
 }
 
+.tableStyle a {
+    font-size: 14px;
+    color: #0099ff;
+    background: none;
+    font-variant: normal;
+    text-decoration: none;
+    /*text-decoration-style: dotted;*/
+    padding: 1px 1px 1px 1px;
+}
+
+.tableStyle {
+    border-collapse: collapse;
+    border: 0px;
+    margin: auto;
+}
+
+.tableStyle th {
+    background-color: #d5e8f9;
+    text-align: center;
+    padding: 5px 5px 5px 10px;
+}
+
+.tableStyle td {
+    padding: 5px 5px 5px 10px;
+}
+
+.tableStyle tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.tableHeaderStyle {
+    border-collapse: collapse;
+    border: 0px;
+}
+
+.tableHeaderStyle th {
+    background-color: #d5e8f9;
+    padding: 5px 5px 5px 10px;
+}
+
+
 #content {
     text-align: center;
 	width: 65%;
-	height: 95%;
-	overflow:hidden;
 	padding-top: 0.5em;
 	padding-left: 0.5em;
     margin:0 auto;

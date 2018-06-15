@@ -12,6 +12,7 @@
         <button class="js-toggle-left-slidebar">Menu</button>
     </div>
     <div id="content">
+        <span th:if="${comment != null}" th:text="${comment}" class="comment"></span>
         <h1>Add New User</h1>
         <form method="post" action="saveUser">
             Name:<br>
@@ -28,6 +29,7 @@
 <div off-canvas="slidebar-1 left reveal" class="mLinkStyle">
     <p><a href="/">Home</a></p>
     <p><a href ="/addUser">New User</a></p>
+    <p><a href ="/viewUser">User List</a></p>
     <p><a href ="/showMatches">Show Matches</a></p>
 </div>
 

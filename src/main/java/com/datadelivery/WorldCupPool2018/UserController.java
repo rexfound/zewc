@@ -1,15 +1,29 @@
 package com.datadelivery.WorldCupPool2018;
 
+import com.datadelivery.WorldCupPool2018.service.DataService;
+import com.google.common.collect.Lists;
 import com.mongodb.client.*;
 import org.bson.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
+import java.util.List;
+
+import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.orderBy;
+
 
 @Controller
 public class UserController {
+
+    DataService dataService;
+
+    @Autowired
+    public void set(DataService dataService) {
+        this.dataService = dataService;
+    }
 
     @GetMapping("/addUser")
     public String addUser() {
@@ -19,22 +33,12 @@ public class UserController {
     @PostMapping("/saveUser")
     public String saveDetails(@RequestParam("name") String name,
                               @RequestParam("team") String team,
-                              @RequestParam("password") String password) {
+                              @RequestParam("password") String password,
+                              Model model) {
         // write your code to save details
 
+        MongoDatabase database =  dataService.initConnection();
         if (!name.isEmpty() && !team.isEmpty() && !password.isEmpty()) {
-            // Creating a Mongo client
-            MongoClient mongo = new MongoClient("localhost", 27017);
-
-            // Creating Credentials
-            MongoCredential credential;
-            credential = MongoCredential.createCredential("sampleUser", "myDb",
-                    "password".toCharArray());
-            System.out.println("Connected to the database successfully");
-
-            // Accessing the database
-            MongoDatabase database = mongo.getDatabase("WC_2018");
-
             MongoCollection userCollection = database.getCollection("Users");
 
             Document newUser = new Document();
@@ -48,11 +52,33 @@ public class UserController {
             FindIterable<Document> iterDoc = userCollection.find(newUser);
 
             if (!iterDoc.iterator().hasNext()){
+                newUser.append("totalBalance", -5.00);
                 userCollection.insertOne(newUser);
+                model.addAttribute("comment", "Successfully added user: " + name);
                 System.out.println("Added new user: " + name + ".");
             }
         }
 
         return "user";
+    }
+
+    @GetMapping("/viewUser")
+    public String viewUser(Model result) {
+
+        MongoDatabase database = dataService.initConnection();
+        MongoCollection userCollection = database.getCollection("Users");
+
+        MongoCursor<Document> cursor = userCollection.find().sort(orderBy(ascending("name"))).iterator();
+        List<Document> userDetail = Lists.newArrayList();
+        try {
+            while (cursor.hasNext()) {
+                userDetail.add(cursor.next());
+            }
+            result.addAttribute("userDetail", userDetail);
+        }
+        finally {
+            cursor.close();
+        }
+        return "userDetail";
     }
 }
