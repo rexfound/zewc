@@ -12,7 +12,22 @@
         <button class="js-toggle-left-slidebar">Menu</button>
     </div>
     <div id="content">
-        <h1>DD Pool</h1>
+        <h1>Current Picks - WC 2018</h1>
+        <table class="tableStyle">
+            <tr>
+                <th>Match ID</th>
+                <th:block th:each = "user: ${users}">
+                    <th th:text="${user}"></th>
+                </th:block>
+            </tr>
+            <tr th:each = "userSelect: ${userSelections}">
+                <td th:text="${userSelect.key}"></td>
+                <th:block th:each = "user: ${users}">
+                    <td th:text="${userSelect.value.get(user)}"></td>
+                </th:block>
+            </tr>
+        </table>
+        <div id="line_top_x"></div>
     </div>
 </div>
 
