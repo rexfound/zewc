@@ -16,6 +16,7 @@ import org.bson.Document;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -175,8 +176,10 @@ public class DataService {
               newBalance = newBalance + totalBetPerRound/totalWinner;
             }
 
+            BigDecimal bdBalance = new BigDecimal(newBalance).setScale(2, BigDecimal.ROUND_HALF_UP);
+
             BasicDBObject newDocument = new BasicDBObject();
-            newDocument.append("$set", new BasicDBObject().append("totalBalance", newBalance));
+            newDocument.append("$set", new BasicDBObject().append("totalBalance", bdBalance.doubleValue()));
 
             BasicDBObject searchUserQuery = new BasicDBObject().append("name", userMatch.getString("user"));
             userCollection.updateOne(searchUserQuery, newDocument);
