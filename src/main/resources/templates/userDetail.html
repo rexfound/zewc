@@ -26,11 +26,11 @@
 
             var options = {
                 chart: {
-                    title: 'Overall progress (Currently generated randomly)'
+                    title: 'Overall progress'
                 },
                 lineWidth: 1,
                 width: 800,
-                height: 300,
+                height: 400,
                 legend: {position: 'top', textStyle: {fontSize: 10}}
             };
 
@@ -51,10 +51,12 @@
             <tr>
                 <th>Name</th>
                 <th>Team</th>
+                <th>Balance</th>
             </tr>
             <tr th:each = "user: ${userDetail}">
                 <td th:text="${user.name}"></td>
                 <td th:text="${user.team}"></td>
+                <td th:text="${user.totalBalance}"></td>
             </tr>
         </table>
         <div id="line_top_x"></div>
