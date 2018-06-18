@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.descending;
 import static com.mongodb.client.model.Sorts.orderBy;
 
 
 @Controller
 public class UserController {
 
-    DataService dataService;
+    private DataService dataService;
 
     @Autowired
     public void set(DataService dataService) {
@@ -68,7 +68,7 @@ public class UserController {
         MongoDatabase database = dataService.initConnection();
         MongoCollection userCollection = database.getCollection("Users");
 
-        MongoCursor<Document> cursor = userCollection.find().sort(orderBy(ascending("name"))).iterator();
+        MongoCursor<Document> cursor = userCollection.find().sort(orderBy(descending("totalBalance"))).iterator();
         List<Document> userDetail = Lists.newArrayList();
         try {
             while (cursor.hasNext()) {

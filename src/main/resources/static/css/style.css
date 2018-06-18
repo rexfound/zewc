@@ -15,6 +15,17 @@
     color: red;
 }
 
+
+.one {
+    width: 25%;
+    height: 200px;
+    float: left;
+}
+.two {
+    margin-left: 25%;
+    height: 200px;
+}
+
 .mLinkStyle a {
     font-size: 12px;
     color: #666666;
