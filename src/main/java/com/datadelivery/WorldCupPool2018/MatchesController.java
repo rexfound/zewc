@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -31,10 +31,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.mongodb.client.model.Sorts.ascending;
+import static com.mongodb.client.model.Sorts.orderBy;
+
 @Controller
 public class MatchesController {
 
     DataService dataService;
+
     Pattern URL_PATT =Pattern.compile("http.*\\/fixtures\\/(\\d+)");
     private final double BET_AMOUNT = 2.00;
 
@@ -42,7 +46,6 @@ public class MatchesController {
     public void set(DataService dataService) {
         this.dataService = dataService;
     }
-
 
     @GetMapping("/showMatches")
     public String showMatches(Model result) {
@@ -174,11 +177,53 @@ public class MatchesController {
                     }
                 }
             }
+            dataService.updateBalance(fixtures);
         }
         catch (IOException ioe) {
             //do nothing
         }
 
         return fixtures;
+    }
+
+    @GetMapping("/viewSelection")
+    public String viewSelection(Model result) {
+
+        MongoDatabase database = dataService.initConnection();
+
+        MongoCollection userCollection = database.getCollection("Users");
+
+        MongoCursor<Document> cursor = userCollection.find().sort(orderBy(ascending("name"))).iterator();
+
+        Map<String, List<Map<String, String>>> userSelections = Maps.newHashMap();
+
+        MongoCollection<Document> userMatchCollection = database.getCollection("UserMatches");
+
+        MongoCursor<String> matchCursor = userMatchCollection.distinct("match", String.class).iterator();
+        MongoCursor<Document> userMatchCursor = null;
+
+        try {
+            while (matchCursor.hasNext()) {
+                String matchId = matchCursor.next();
+                BasicDBObject query = new BasicDBObject();
+                query.put("match", matchId);
+
+                userMatchCursor = userMatchCollection.find(query).iterator();
+
+                List<Map<String, String>> picks = Lists.newArrayList();
+                while (userMatchCursor.hasNext()) {
+                    Document usrPick = userMatchCursor.next();
+                    Map<String, String> usrPickMap = Maps.newHashMap();
+                    usrPickMap.put((String) usrPick.get("user"), (String) usrPick.get("teamPick"));
+                    picks.add(usrPickMap);
+                }
+                userSelections.put(matchId, picks);
+            }
+            result.addAttribute("userSelections", userSelections);
+        } finally {
+            userMatchCursor.close();
+            matchCursor.close();
+        }
+        return "selection";
     }
 }
