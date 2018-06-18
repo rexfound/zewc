@@ -73,10 +73,9 @@ public class MatchesController {
     }
 
     @PostMapping("/placeBet")
-    public String placeBet(@RequestParam("matchID") String matchID,
-                            @RequestParam("name") String name,
-                                @RequestParam("team") String team,
-                                    @RequestParam("password") String password, Model model) {
+    public String placeBet(@RequestParam("seqID") int seqID,
+                            @RequestParam("matchID") String matchID, @RequestParam("name") String name,
+                              @RequestParam("team") String team, @RequestParam("password") String password, Model model) {
         // write your code to save details
         MongoDatabase database =  dataService.initConnection();
         if (!name.isEmpty() && !team.isEmpty() && !password.isEmpty()) {
@@ -84,6 +83,7 @@ public class MatchesController {
             MongoCollection userMatchesCollection = database.getCollection("UserMatches");
 
             Document newPick = new Document();
+            newPick.append("seqID", seqID);
             newPick.append("match", matchID);
             newPick.append("user", name);
 
@@ -146,7 +146,7 @@ public class MatchesController {
 
         try {
             JsonParser parser = factory.createParser(result.getBody());
-
+            int sequenceID = 1;
             while(!parser.isClosed()){
                 JsonToken jsonToken = parser.nextToken();
                 if(JsonToken.FIELD_NAME.equals(jsonToken)){
@@ -164,6 +164,8 @@ public class MatchesController {
                             Matcher mtr = URL_PATT.matcher(matchURL);
                             if (mtr.matches()) {
                                 map.put("MatchID", mtr.group(1));
+                                map.put("seqID", Integer.toString(sequenceID));
+                                sequenceID++;
                             }
                             map.put("Competition", matchURL);
                         }

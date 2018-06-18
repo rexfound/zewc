@@ -33,7 +33,8 @@ public class UserController {
     @PostMapping("/saveUser")
     public String saveDetails(@RequestParam("name") String name,
                               @RequestParam("team") String team,
-                              @RequestParam("password") String password) {
+                              @RequestParam("password") String password,
+                              Model model) {
         // write your code to save details
 
         MongoDatabase database =  dataService.initConnection();
@@ -51,7 +52,9 @@ public class UserController {
             FindIterable<Document> iterDoc = userCollection.find(newUser);
 
             if (!iterDoc.iterator().hasNext()){
+                newUser.append("totalBalance", -5.00);
                 userCollection.insertOne(newUser);
+                model.addAttribute("comment", "Successfully added user: " + name);
                 System.out.println("Added new user: " + name + ".");
             }
         }
